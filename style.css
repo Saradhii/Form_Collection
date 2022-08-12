@@ -1,0 +1,49 @@
+.mock5_form{
+    /* border:2px solid black; */
+    width:90%;
+    margin:auto;
+    height:250px;
+    padding:20px;
+    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(2,45%);
+    gap:40px;
+
+}
+.mock5_form>div{
+    border:2px solid black;
+}
+
+.mock5_body{
+    /* border:1px solid black; */
+    height:500px;
+    width:93%;
+    margin:auto;
+    margin-top: 5px;
+}
+.mock5_body > div {
+    width:100%;
+    margin:auto;
+    height:60px;
+    display: grid;
+    grid-template-columns: repeat(6,18%);
+    padding-left: 10px;
+    border: 1px solid black;
+}
+.header{
+    background-color: green;
+    color:white;
+    width:92%;
+    margin:auto;
+    height:60px;
+    display: grid;
+    grid-template-columns: repeat(6,18%);
+    padding-left: 10px;
+    border: 1px solid black;
+    margin-top: 10px;
+}
+button{
+    margin-top: 10px;
+    width:70px;
+    height:30px;
+}

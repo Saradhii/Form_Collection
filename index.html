@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- div for form -->
+    <div class="mock5_form">
+        <div>
+            <h1>FORM</h1>
+            <form id="formdata">
+                <lable>Country : </lable>
+                <select name="countrys" id="country">
+                        <option value="India">India</option>
+                        <option value="Srilanka">Srilanka</option>
+                        <option value="Pakistan">Pakistan</option>
+                        <option value="China">China</option>
+                      </select><br><br>
+                <lable>City :</lable>
+                <input type="text" id="city"/><br><br>
+                <lable>Population :</lable>
+                <input type="text" id="population"/><br><br>
+                <input type="submit" id="submit"/>
+            </form>
+        </div>
+        <div>
+            <h1>Sorting & Filtering</h1>
+            <!-- sorting -->
+            <form id="sorttype">
+                <label>Sort by population:</label>
+                <select name="sorting" id="sorting">
+                  <option value="low">Low to High</option>
+                  <option value="high">High to Low</option>
+                </select>
+                <input type="submit" value="sort" id="sortsubmit"/>
+            </form><br>
+            <!-- filtering -->
+            <form id="filtertype">
+                <lable>Filter by Country : </lable>
+                <select name="countrys" id="filtercountry">
+                        <option value="India">India</option>
+                        <option value="Srilanka">Srilanka</option>
+                        <option value="Pakistan">Pakistan</option>
+                        <option value="China">China</option>
+                </select>
+                <input type="submit" value="filter" id="filtersubmit"/>
+            </form>
+        </div>
+    </div>
+
+    <!-- div for displaying json data -->
+    <div class="header">
+        <p>ID</p>
+        <p>COUNRTY</p>
+        <p>CITY</p>
+        <p>POPULATION</p>
+        <p>EDIT</p>
+        <p>DELETE</p>
+    </div>
+
+    <div class="mock5_body">
+     
+    </div>
+
+</body>
+</html>
+<script>
+    
+    //Function to store form data in json-server
+    const formSubmit = async(event)=>{
+    event.preventDefault();
+    var country = document.querySelector("#country").value;
+    var city = document.querySelector("#city").value;
+    var population = document.querySelector("#population").value;
+    var UserDetails = {
+    Country: country,
+    City:city,
+    Population:population,
+    };
+    let response = await fetch("https://fake-server-mock.herokuapp.com/users", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      "Country":UserDetails.Country,
+      "City": UserDetails.City,
+      "Population": UserDetails.Population
+    }),
+    }); 
+    alert("Data saved sucessfully");
+    window.location.reload();
+    }
+    
+    //Adding Event listner on Form submit
+    let formdata = document.querySelector("#formdata");
+    formdata.addEventListener("submit", formSubmit);
+
+    var data;
+    //Getting data from json
+    const getData = async () => {
+        let res = await fetch(`https://fake-server-mock.herokuapp.com/users`, {
+          method: "GET",
+          headers: {
+            "contnet-type": "application/json",
+          },
+        });
+        let responce = await res.json();
+        data = responce;
+        appenddata(data);
+        return data;
+    };
+    getData();
+
+    //sorting function
+    function sort(e){
+        e.preventDefault();
+        var sorting = document.querySelector("#sorting").value;
+        if(sorting=="low")
+        {
+            data.sort((a,b)=>Number(a.Population) - Number(b.Population));
+            console.log(sorting,data);
+            appenddata(data)
+        }
+        if(sorting=="high")
+        {
+            data.sort((a,b)=>Number(b.Population) - Number(a.Population));
+            console.log(sorting,data);
+            appenddata(data)
+        }
+        }
+
+    //sorting event
+    let sorting = document.querySelector("#sorttype");
+    sorting.addEventListener("submit", sort);
+
+    //filtering function
+    function filter(e){
+        e.preventDefault();
+        var filter = document.querySelector("#filtercountry").value;
+        let filterData = data.filter(function (el) {
+         return el.Country.includes(filter);
+         });
+        appenddata(filterData);
+    }
+
+    //filtering event
+    let filtering = document.querySelector("#filtertype");
+    filtering.addEventListener("submit", filter);
+
+    //Appending json-data
+    var main = document.querySelector(".mock5_body");
+    function appenddata(data){
+    main.innerHTML="";
+    data.forEach(function(elem,index){
+    var div = document.createElement("div");
+
+    var id = document.createElement("p");
+    id.innerText = elem.id;
+
+    var country = document.createElement("p");
+    country.innerText = elem.Country;
+
+    var city = document.createElement("p");
+    city.innerText = elem.City;
+
+    var population = document.createElement("p");
+    population.innerText = elem.Population;
+
+    var edit = document.createElement("button");
+    edit.innerText = "Edit";
+
+    var del = document.createElement("button");
+    del.innerText = "Delete";
+    del.addEventListener("click", function () {
+        deleteItem(elem.id);
+      });
+
+    div.append(id,country,city,population,edit,del);
+    main.append(div);
+    });
+    };
+
+    //deletion
+    const deleteItem = async(index)=>{
+      let res = await fetch(`https://fake-server-mock.herokuapp.com/users/${index}`, {
+      method: "DELETE",
+      });
+      let Newdata = await res.json();
+      appenddata(data);
+      alert("Item deleted");
+      window.location.reload();
+    }
+        
+
+</script>
